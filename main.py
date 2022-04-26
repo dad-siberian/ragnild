@@ -46,6 +46,7 @@ def main():
             continue
         except requests.exceptions.ConnectionError:
             time.sleep(60)
+            continue
         timestamp = get_timestamp(checklist)
         if checklist.get('status') == 'found':
             send_massage(bot, chat_id, checklist.get('new_attempts'))
