@@ -1,4 +1,3 @@
-from decimal import DivisionByZero
 import logging
 import os
 import time
@@ -49,14 +48,14 @@ def send_massage(bot, chat_id, attempts):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    logger.setLevel(logging.DEBUG)
     load_dotenv()
     dvmn_api = os.getenv('DVMN_API')
     telegram_api = os.getenv('TELEGRAM_API')
     chat_id = os.getenv('CHAT_ID')
     timestamp = time.time()
     bot = telegram.Bot(token=telegram_api)
+    logging.basicConfig(level=logging.DEBUG)
+    logger.setLevel(logging.DEBUG)
     logger.addHandler(TelegramLogsHandler(bot, chat_id))
     logger.info('The ragnhild bot is running')
     while True:
