@@ -1,3 +1,4 @@
+from decimal import DivisionByZero
 import logging
 import os
 import time
@@ -5,6 +6,20 @@ import time
 import requests
 import telegram
 from dotenv import load_dotenv
+
+
+logger = logging.getLogger('Logger')
+
+class TelegramLogsHandler(logging.Handler):
+
+    def __init__(self, bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.main = bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.main.send_message(chat_id=self.chat_id, text=log_entry)
 
 
 def get_checklist(dvmn_api, timestamp):
@@ -35,19 +50,22 @@ def send_massage(bot, chat_id, attempts):
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    logging.info('Start bot ragnild dvmn')
+    logger.setLevel(logging.DEBUG)
     load_dotenv()
     dvmn_api = os.getenv('DVMN_API')
     telegram_api = os.getenv('TELEGRAM_API')
     chat_id = os.getenv('CHAT_ID')
     timestamp = time.time()
     bot = telegram.Bot(token=telegram_api)
+    logger.addHandler(TelegramLogsHandler(bot, chat_id))
+    logger.info('The ragnhild bot is running')
     while True:
         try:
             checklist = get_checklist(dvmn_api, timestamp)
         except requests.exceptions.ReadTimeout:
             continue
         except requests.exceptions.ConnectionError:
+            logger.error('Connection error...')
             time.sleep(60)
             continue
         timestamp = get_timestamp(checklist)
