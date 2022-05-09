@@ -64,9 +64,12 @@ def main():
             checklist = get_checklist(dvmn_api, timestamp)
         except requests.exceptions.ReadTimeout:
             continue
-        except requests.exceptions.ConnectionError:
-            logger.error('Connection error...')
+        except requests.exceptions.ConnectionError as error:
+            logger.exception(error)
             time.sleep(60)
+            continue
+        except Exception as error:
+            logger.exception(error)
             continue
         timestamp = get_timestamp(checklist)
         if checklist.get('status') == 'found':
