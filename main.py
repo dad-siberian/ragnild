@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -33,6 +34,8 @@ def send_massage(bot, chat_id, attempts):
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info('Start bot ragnild dvmn')
     load_dotenv()
     dvmn_api = os.getenv('DVMN_API')
     telegram_api = os.getenv('TELEGRAM_API')
